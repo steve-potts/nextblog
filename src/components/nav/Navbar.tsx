@@ -14,7 +14,8 @@ export default function Navbar() {
         (
         <div className='flex justify-start'>
           <div className='flex flex-col md:flex-row justify-start items-center md:gap-4'>
-            <div className='flex items-center gap-1'><BiCoin/> <span className='hidden md:block'>Credits:</span> 0</div>
+            <div className='flex items-center gap-1'><BiCoin/>
+            <span className='hidden md:block'>Credits:</span>0</div>
             <Link href="/profile"
               className='text-xs md:text-sm font-bold text-gray-600 hover:text-indigo-600'>
               BUY MORE
