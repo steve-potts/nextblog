@@ -22,11 +22,12 @@ export default function Sidebar() {
         return <BiHome />
     }
   }
+  
   return user ?
     <div className='bg-white border border-gray-100 py-2 flex flex-shrink-0
     flex-row justify-around md:justify-start md:flex-col md:h-full md:w-32 z-10'>
       {menu.map((item, index) => (
-        <Link href={item.route} key={index} 
+        <Link href={item.route} key={index}
           className='flex flex-row items-center relative hover:bg-indigo-50 px-4 py-2 cursor-pointer group'>
           <div className='flex flex-row items-center'>
             {currentRoute === item.route &&
