@@ -5,12 +5,17 @@ import Link from "next/link";
 
 export default withPageAuthRequired(
   function Page() {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+      console.log(e);
+    }
+
     return (
-      <main>
-        <p>User Page</p>
-        <div>
-          <Link href="/">Go to Home</Link>
-        </div>
-      </main>
+      <section className="w-full flex flex-col items-center">
+        <section className="w-[95%] max-w-4xl">
+          <form onSubmit={handleSubmit}>
+            
+          </form>
+        </section>
+      </section>
     );
   })

@@ -39,5 +39,5 @@ export default function Sidebar() {
           </div>
         </Link>
       ))}
-    </div> : <div></div>;
+    </div> : <div className='md:mr-32'></div>;
 }
