@@ -6,21 +6,35 @@ export default function Page() {
   const { user, error, isLoading } = useUser();
 
   return (
-    <main>
-      <h1>Home Page</h1>
-      {user && <p>The user {user?.name} is logged in.</p>}
+    <main className="w-full flex flex-col">
       {
         user ? (
-          <a href="/api/auth/logout">Logout</a>
+          <div className="flex flex-col items-center justify-center gap-4">
+            <h1 className="mt-4 text-4xl font-bold text-center text-indigo-600">
+              Hi, { user?.nickname || user?.name || 'our wonderful friend!' }
+            </h1>
+            <h2 className="text-xl max-w-lg text-center text-gray-600">
+              Welcome to Bloggify, get started writing your posts!
+            </h2>
+            <Link
+              href="/new"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition-all cursor-pointer">
+                Get Started
+            </Link>
+          </div>
         ) : (
-          <a href="/api/auth/login">Login</a>
+          <div className="flex flex-col items-center justify-center gap-4">
+            <h1 className="mt-4 text-4xl font-bold text-center text-indigo-600">
+              Hello!
+            </h1>
+            <h2 className="text-xl max-w-lg text-center text-gray-600">
+              Welcome to Bloggify, easily create blog posts!
+            </h2>
+            <a className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500 transition-all cursor-pointer" href="/api/auth/login">
+              Login to get started</a>
+          </div>
         )
       }
-      <div>
-      <Link href="/profile">Go to profile</Link>
-      </div>
-      
-      
     </main>
   )
 }
