@@ -5,12 +5,25 @@ import Link from "next/link";
 
 export default withPageAuthRequired(
   function Page() {
+
+    function addCredits() {
+      
+    }
+
     return (
-      <main>
-        <p>User Page</p>
-        <div>
-          <Link href="/">Go to Home</Link>
-        </div>
-      </main>
+      <section className="w-full flex flex-col items-center">
+        <section className="w-[95%] max-w-4xl flex flex-col items-center gap-4">
+          <h1 className="text-4xl font-bold text-center mt-4 text-indigo-600">
+            Profile
+          </h1>
+          <h2 className="text-2xl font-bold text-center text-gray-800">
+            You have 0 credits.
+          </h2>
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded-md font-bold text-xl"
+            onClick={addCredits}>
+            Buy more credits
+          </button>
+        </section>
+      </section>
     );
   })
