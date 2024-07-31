@@ -1,12 +1,13 @@
 "use client";
 import { tones } from "@/data/tones";
+import { generatePost } from "@/lib/functions";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useState } from "react";
 
 export default withPageAuthRequired(
   function Page() {
-
+    const [post, setPost] = useState<Post | null>(null);
     const [postPrompt, setPostPrompt] = useState<PostPrompt>({
       title: '',
       description: '',
@@ -14,9 +15,13 @@ export default withPageAuthRequired(
       tone: ''
     });
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
       e.preventDefault();
-      console.log(postPrompt);
+      const res = await generatePost(postPrompt);
+      await res.json().then((data) => {
+        console.log(data);
+        setPost(data.post);
+      });
     }
 
     return (
