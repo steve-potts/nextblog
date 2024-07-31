@@ -6,7 +6,7 @@ import OpenAI from 'openai';
 const withApiAuthRequiredExtended = withApiAuthRequired as any;
 
 export const POST = withApiAuthRequiredExtended(async (request: NextRequest, response: NextResponse) => {
-    //const { db } = await connectToDatabase();
+    const { db } = await connectToDatabase();
     try {
         //const test = await db.collection("test").find({}).toArray();
         const session = await getSession(request, response);
@@ -70,6 +70,8 @@ export const POST = withApiAuthRequiredExtended(async (request: NextRequest, res
             content: _paragraphs || ['No content generated'],
             uid: user.sub
         }
+
+        await db.collection('posts').insertOne(post);
 
         return NextResponse.json({ success: true, post: post }, { status: 200 });
     } catch (error) {
