@@ -1,12 +1,17 @@
 "use client";
 import React from 'react'
 interface Props {
-    post: PostWIthId
+    post: PostWIthId;
+    handleDeletePost: (_id: string) => void;
 }
 
-export default function Post({ post }: Props) {
+export default function Post({ post, handleDeletePost }: Props) {
     function handleCopyToClipboard() {
         navigator.clipboard.writeText(post.title + '\n' + post.content)
+    }
+
+    function handleDelete() {
+        handleDeletePost(post._id);
     }
 
     return (
@@ -33,6 +38,11 @@ export default function Post({ post }: Props) {
                 onClick={handleCopyToClipboard}
                 className='bg-indigo-600 text-white px-4 py-2 rounded-md
              hover:bg-indigo-500 transition-all cursor-pointer'>Copy
+            </button>
+            <button
+                onClick={handleDelete}
+                className='bg-rose-600 text-white px-4 py-2 rounded-md
+             hover:bg-rose-500 transition-all cursor-pointer'>Delete
             </button>
         </div>
     );
