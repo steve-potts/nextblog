@@ -3,3 +3,7 @@ interface Post {
     content: string | string[];
     uid: string;
 }
+
+interface PostWIthId extends Post {
+    _id: string;
+}
