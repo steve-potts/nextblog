@@ -6,13 +6,24 @@ import OpenAI from 'openai';
 const withApiAuthRequiredExtended = withApiAuthRequired as any;
 
 export const POST = withApiAuthRequiredExtended(async (request: NextRequest, response: NextResponse) => {
-    //const { db } = await connectToDatabase();
+    const { db } = await connectToDatabase();
     try {
         //const test = await db.collection("test").find({}).toArray();
         const session = await getSession(request, response);
         const user = session?.user;
         if (!user) {
             return NextResponse.error();
+        }
+
+        const profile = await db.collection('profiles').find({
+            uid: user.sub
+        }).toArray();
+
+        if (profile[0].credits < 1) {
+            return NextResponse.json({
+                success: false,
+                message: 'Not enough credits!',
+            }, {status: 200})
         }
 
         const body = await request.json();
@@ -70,6 +81,16 @@ export const POST = withApiAuthRequiredExtended(async (request: NextRequest, res
             content: _paragraphs || ['No content generated'],
             uid: user.sub
         }
+
+        await db.collection('posts').insertOne(post);
+
+        await db.collection('profiles').updateOne({
+            uid: user.sub
+        }, {
+            $inc: {
+                credits: -1
+            }
+        });
 
         return NextResponse.json({ success: true, post: post }, { status: 200 });
     } catch (error) {

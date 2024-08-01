@@ -1,6 +1,8 @@
 "use client";
 
+import { refetchCreditsAtom } from "@/atoms/flagAtom";
 import { profileAtom } from "@/atoms/profileAtom";
+import { addCredits } from "@/lib/functions";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
 import Link from "next/link";
@@ -10,9 +12,14 @@ export default withPageAuthRequired(
   function Page() {
     
     const [profile, setProfile] = useRecoilState(profileAtom);
+    const [refetchCredits, setRefetchCredits] = useRecoilState(refetchCreditsAtom);
 
-    function addCredits() {
-      setProfile((profile) => ({ ...profile, credits: profile.credits + 5 }));
+    function handleAddCredits() {
+      async function handler() {
+        await addCredits();
+        setRefetchCredits((prev) => !prev);
+      }
+      handler();
     }
 
     return (
@@ -25,7 +32,7 @@ export default withPageAuthRequired(
             You have {profile.credits} credits.
           </h2>
           <button className="bg-indigo-600 text-white px-4 py-2 rounded-md font-bold text-xl"
-            onClick={addCredits}>
+            onClick={handleAddCredits}>
             Buy more credits
           </button>
         </section>

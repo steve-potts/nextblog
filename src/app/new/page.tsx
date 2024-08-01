@@ -1,10 +1,12 @@
 "use client";
+import { refetchCreditsAtom } from "@/atoms/flagAtom";
 import { tones } from "@/data/tones";
 import { generatePost } from "@/lib/functions";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
 import { useState } from "react";
 import { FaSpinner, FaRegTired } from 'react-icons/fa';
+import { useRecoilState } from "recoil";
 
 export default withPageAuthRequired(
   function Page() {
@@ -13,6 +15,7 @@ export default withPageAuthRequired(
     const [hasSubmitted, setHasSubmitted] = useState(false);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [refetchCredits, setRefetchCredits] = useRecoilState(refetchCreditsAtom);
     const [postPrompt, setPostPrompt] = useState<PostPrompt>({
       title: '',
       description: '',
@@ -28,6 +31,10 @@ export default withPageAuthRequired(
       setIsWaitingForResponse(true);
 
       const res = await generatePost(postPrompt);
+
+      // flip bool to trigger update of credits
+      setRefetchCredits((prev) => !prev);
+
       await res.json().then((data) => {
         setIsWaitingForResponse(false);
         setHasSubmitted(false);
@@ -35,6 +42,7 @@ export default withPageAuthRequired(
         setPost(data.post);
       }).catch((err) => {
         setIsWaitingForResponse(false);
+        setHasSubmitted(false);
         setError(true);
       });
     }

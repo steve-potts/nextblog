@@ -1,15 +1,30 @@
 "use client";
+import { refetchCreditsAtom } from '@/atoms/flagAtom';
 import { profileAtom } from '@/atoms/profileAtom';
+import { getProfile } from '@/lib/functions';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BiCoin, BiLogOut, BiPen } from 'react-icons/bi';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 export default function Navbar() {
   const { user } = useUser();
-  const profile = useRecoilValue(profileAtom);
+  const [profile, setProfile] = useRecoilState(profileAtom);
+  const refetchCredits = useRecoilValue(refetchCreditsAtom);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const profile = await getProfile();
+      console.log(profile);
+      setProfile(profile);
+    }
+    if (user) {
+      fetchProfile();
+    }
+    
+  }, [user, setProfile, refetchCredits]);
 
   return (
     <nav className='w-full bg-white shadow-md px-6 py-2 z-20 grid grid-cols-3'>
