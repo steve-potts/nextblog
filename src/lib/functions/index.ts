@@ -53,5 +53,5 @@ export async function addCredits() {
         cache: 'no-cache'
     });
     const data = await res.json();
-    return data;
+    window.location.href = data.session.url;
 }
