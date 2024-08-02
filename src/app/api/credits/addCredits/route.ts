@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongo";
 import { getSession, withApiAuthRequired } from "@auth0/nextjs-auth0";
+import { Stripe } from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
+  typescript: true
+})
 
 const withApiAuthRequiredExtended = withApiAuthRequired as any;
 
@@ -13,37 +19,30 @@ export const GET = withApiAuthRequiredExtended(async(request: NextRequest, respo
       return NextResponse.error();
     }
 
-    let profile;
+    const purchasedItems = [
+      {
+        price: process.env.STRIPE_PRICE_ID!,
+        quantity: 1
+      }
+    ];
 
-    // find profile of user
-    const data = await db.collection("profiles").find({
-      uid: user.sub
-    }).toArray();
+    const stripeSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: purchasedItems,
+      mode: 'payment',
+      success_url: `${process.env.NEXT_PUBLIC_URL}/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}/profile`,
+      payment_intent_data: {
+        metadata: {
+          userId: user.sub
+        },
+      },
+      metadata: {
+        userId: user.sub
+      }
+    });
 
-    // if none found we create one
-    if (data.length === 0) {
-        await db.collection('profiles').insertOne({
-            uid: user.sub,
-            credits: 10
-        });
-        // we also need to populate the profile variable above.
-        profile = {
-            uid: user.sub,
-            credits: 10
-        }
-    } else {
-        // get the users profile as a user is found.
-        profile = data[0];
-        await db.collection('profiles').updateOne({
-            uid: user.sub
-        }, {
-            $inc: {
-                credits: 10
-            }
-        })
-    }
-
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, session: stripeSession }, { status: 200 });
   } catch (error) {
     return NextResponse.error();
   }
